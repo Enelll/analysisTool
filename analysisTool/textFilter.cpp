@@ -34,6 +34,7 @@ void textFilter::saveText()
 	string strsub1 = temp.substr(0, pos+2);
 	cout <<"帧头：" << strsub1 << endl;
 
+	//返回的为迭代器
 	auto pos1 = prev(temp.end(),2);
 	auto pos2 = prev(temp.end(),1);
 	cout << "帧尾：" << *pos1 << *pos2 << endl;
