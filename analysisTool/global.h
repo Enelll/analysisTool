@@ -1,7 +1,7 @@
 #pragma once
 
-//固定帧
+// 固定帧
 #define filename1 "test1.txt"
 
-//可变帧
+// 可变帧
 #define filename2 "test2.txt"
