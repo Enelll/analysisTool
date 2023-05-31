@@ -14,16 +14,17 @@ void textFilter::saveText()
 
 	ifstream ifs;
 	ifs.open(filename2, ios::in);
-	string temp;
 
 	// 10 5a ff ff 58 16 
 	while (ifs >> this->m_txtS)
 	{
+		//逐个读取文本字符串并+=保存至m_txtS
 		cout << this->m_txtS;
 		temp += this->m_txtS;
 
 		//识别帧单元
 
+		//将
 		this->m_txtV_two.push_back(this->m_txtS);
 		this->m_txtV_one.push_back(this->m_txtV_two);
 		this->m_txtV_two.clear();
