@@ -31,6 +31,7 @@ public:
 
 	string m_txtS;
 
+	string temp;
 	// ²âÊÔÓÃ±¨ÎÄ
 	// string m_test_txtS=" 10 5a ff ff 58 16 ";
 
