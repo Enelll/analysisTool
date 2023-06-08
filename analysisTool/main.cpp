@@ -7,4 +7,5 @@ int main()
 {
 	textFilter tf;
 	tf.saveText();
+	tf.extractTEXT();
 }
