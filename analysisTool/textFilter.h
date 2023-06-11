@@ -14,6 +14,9 @@
 #include <cctype>
 #include <locale>
 #include <codecvt>
+#include <sstream>
+#include <iomanip>
+
 
 using namespace std;
 
@@ -24,33 +27,33 @@ public:
 
 	textFilter(string txtS);
 
-	void saveText(); //逐字节拆分报文并保存至vector<string>容器
-
 	//读取文件中的全部报文
 	// string m_txtS;
 
-	//单个字节。完整的报文逐个字节拆分,按顺序逐个存储到m_txtV_VS中
-	vector<string> m_txtV_VS;
+	void saveText(); //逐字节拆分报文并保存至vector<string>容器
 
-	void extractText(); //提取帧单元（报文段）（识别固定帧/可变帧的帧头、帧尾、数据区等）
+	//逐个字节拆分报文并保存
+	vector<string> m_txtV_VS;//单个字节
 
-	//报文段。m_txtV_VS中的字节按报文段保存该容器保存不同的报文段（如控制域、帧长、校验和等等）
-	// 文字对应键，报文对应值
-	multimap<string, string> m_txtM_SS;
+	void extractText(); //提取报文段（如控制域、数据域等）
 
-	void controlBinData(multimap<string, string>& MSS); //控制域16进制转换2进制
+	//不同的报文段（如控制域、数据域等）
+	multimap<string, string> m_txtM_SS;	//文字对应键，报文对应值
+
+	string Hex2Bin( string s); //将控制域16进制转换2进制并保存为string
+
+	string Bin2Hex( string s); //将控制域2进制转换16进制并保存为string
+
+	string AddBinary(string a, string b);//2进制相加
 
 	// 保存转换后的2进制数据（控制域）
-	// 文字对应键，2进制数据对应值
-	multimap<string, bitset<8>> m_txtM_SB_binary;
+	multimap<string, bitset<8>> m_txtM_SB_binary;	// 文字对应键，2进制数据对应值
 
-	void checkoutData(); //校验和核对
+	void checkoutData(); //校验和-计算核对（[控制域]到校验和之前的所有数据和，即所以的16进制数相加）
 
-	//将一个字符串转换为16进制数，例如“12”转换为0x12, "12345678"转换为0x12345678。
-	//注意： 转换前每一个字符占用一个字节，转换后两个数字占用一个字节
-	//如“12345678"占用8个字节，转换后占用四个字节：0x12, 0x34, 0x56, x078.
-	void strTo0x(string str);
+	void frameLength();//可变帧帧长度核对（[控制域]到校验和之前的所有字节数，即多少个16进制数）
 
+	string analysisText();//解析链路用户数据
 
 	~textFilter();
 
@@ -58,5 +61,5 @@ public:
 	int index = 0;
 
 	//标志位，1-固定帧，2-可变帧
-	int flag = 0;
+	int flag = 0;//暂未使用
 };

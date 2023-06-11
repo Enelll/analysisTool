@@ -7,4 +7,8 @@ int main()
 {
 	textFilter tf;
 	tf.saveText();
+	tf.extractText();
+	tf.checkoutData();
+	tf.frameLength();
+	cout << endl;
 }
