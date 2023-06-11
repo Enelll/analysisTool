@@ -422,7 +422,7 @@ void textFilter::analysisText()
 				cout << "数据正常，字符为偶数" << endl;
 				cout << "数据解析结果：" << endl;
 
-				//该段只适用于英文字符
+				// 该段只适用于英文字符
 				/*for (int j = 0; j < it->second.length() - 1; j += 2)
 				{
 					userData += static_cast<char>(stoi(it->second.substr(j, 2), nullptr, 16));
