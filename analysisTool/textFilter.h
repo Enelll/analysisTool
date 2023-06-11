@@ -53,7 +53,27 @@ public:
 
 	void frameLength();//可变帧帧长度核对（[控制域]到校验和之前的所有字节数，即多少个16进制数）
 
-	string analysisText();//解析链路用户数据
+	void analysisText();//拆分并解析链路用户数据
+
+	//链路用户数据中不同的数据单元（[ASDU]数据单元标识、应用服务单元公共地址、数据区）
+	multimap<string, string> m_txtM_SS_userdata;	//文字对应键，报文对应值
+
+	vector<string> nameSpeed1 = { "类型标识","可变结构限定词","传送原因" };
+	vector<string> nameSpeed2 = { "设备地址低字节","设备地址高字节","记录地址" };
+	
+
+	//1.控制域解析
+
+	//2.ASDU数据单元标识解析
+
+	//3.应用服务单元公共地址解析
+
+	//4.数据区解析
+
+
+
+
+
 
 	~textFilter();
 
@@ -62,4 +82,6 @@ public:
 
 	//标志位，1-固定帧，2-可变帧
 	int flag = 0;//暂未使用
+
+	int numBits = 16;// 2进制数据位数
 };

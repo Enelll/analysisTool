@@ -74,7 +74,7 @@ void textFilter::extractText()
 		for (int i = 0; i < index; i++)
 		{
 			//setw(12)用于对其文字输出
-			cout << left << setw(12) << v[i] << setw(3) << m_txtV_VS[i] << endl;
+			cout << left << setw(12) << v[i] << setw(3) << "0x:" << m_txtV_VS[i] << endl;
 
 			m_txtM_SS.insert(make_pair(v[i], m_txtV_VS[i]));
 		}
@@ -101,7 +101,7 @@ void textFilter::extractText()
 		//数据区前
 		for (int i = 0; i < 7; i++)
 		{
-			cout << left << setw(15) << v[i] << setw(3) << m_txtV_VS[i] << endl;
+			cout << left << setw(15) << v[i] << setw(3) << "0x:" << m_txtV_VS[i] << endl;
 
 			m_txtM_SS.insert(make_pair(v[i], m_txtV_VS[i]));
 		}
@@ -112,15 +112,15 @@ void textFilter::extractText()
 		{
 			temp += m_txtV_VS[i];
 		}
-		cout << left << setw(15) << v[v.size() - 3] << setw(3) << temp << endl;
+		cout << left << setw(15) << v[v.size() - 3] << setw(3) << "0x:" << temp << endl;
 		m_txtM_SS.insert(make_pair(v[v.size() - 3], temp));
 
 		//校验和
-		cout << left << setw(15) << v[v.size() - 2] << setw(3) << m_txtV_VS[m_txtV_VS.size() - 2] << endl;
+		cout << left << setw(15) << v[v.size() - 2] << setw(3) << "0x:" << m_txtV_VS[m_txtV_VS.size() - 2] << endl;
 		m_txtM_SS.insert(make_pair(v[v.size() - 2], m_txtV_VS[m_txtV_VS.size() - 2]));
 
 		//帧尾
-		cout << left << setw(15) << v[v.size() - 1] << setw(3) << m_txtV_VS[m_txtV_VS.size() - 1] << endl;
+		cout << left << setw(15) << v[v.size() - 1] << setw(3) << "0x:" << m_txtV_VS[m_txtV_VS.size() - 1] << endl;
 		m_txtM_SS.insert(make_pair(v[v.size() - 1], m_txtV_VS[m_txtV_VS.size() - 1]));
 	}
 	else
@@ -131,8 +131,6 @@ void textFilter::extractText()
 
 string textFilter::Hex2Bin(string s)
 {
-	int numBits = 8;
-
 	int num = stoi(s, nullptr, 16);
 	bitset<32> binary(num); // 创建一个 32 位的二进制表示，将整数值 num 转换为二进制字符串
 
@@ -199,13 +197,14 @@ string textFilter::AddBinary(string a, string b)
 
 		carry = sum / 2;
 	}
-	result = result.substr(result.length() - 8);
+	result = result.substr(result.length() - numBits);
 	return result;
 }
 
 void textFilter::checkoutData()
 {
 	cout << "==========checkoutData==========" << endl;
+	cout << "16进制核对最后两位,2进制核对最后8位" << endl;
 	string aHex, aBin;
 	string bHex, bBin;
 	//读取报文的校验和
@@ -220,9 +219,9 @@ void textFilter::checkoutData()
 			{
 				aHex = it->second;
 				aBin = Hex2Bin(it->second);
-				cout << "固定帧" << it->first
-					<< ":  0x:" << it->second
-					<< "  0b:" << Hex2Bin(it->second)
+				cout << "固定帧(原始值)" << it->first
+					<< ":  0x:00" << it->second
+					<< "    0b:" << Hex2Bin(it->second)
 					<< endl;
 			}
 			else if (it->first == "控制域" || it->first == "地址低字节" || it->first == "地址高字节")
@@ -232,7 +231,7 @@ void textFilter::checkoutData()
 			}
 		}
 		bHex = Bin2Hex(bBin);
-		cout << "校验区结果:" << "    0x:" << bHex << "  0b:" << bBin << endl;
+		cout << "校验区结果:" << "            0x:" << bHex << "  0b:" << bBin << endl;
 
 		if (aHex == bHex && aBin == bBin)
 		{
@@ -248,9 +247,9 @@ void textFilter::checkoutData()
 			{
 				aHex = it->second;
 				aBin = Hex2Bin(it->second);
-				cout << "可变帧" << it->first
-					<< ":  0x:" << it->second
-					<< "  0b:" << Hex2Bin(it->second)
+				cout << "可变帧(原始值)" << it->first
+					<< ":  0x:00" << it->second
+					<< "    0b:" << Hex2Bin(it->second)
 					<< endl;
 			}
 			else if (it->first == "控制域" || it->first == "地址低字节" || it->first == "地址高字节")
@@ -268,7 +267,7 @@ void textFilter::checkoutData()
 			}
 		}
 		bHex = Bin2Hex(bBin);
-		cout << "校验区结果:" << "    0x:" << bHex << "  0b:" << bBin << endl;
+		cout << "校验区结果:" << "            0x:" << bHex << "  0b:" << bBin << endl;
 
 		if (aHex == bHex && aBin == bBin)
 		{
@@ -312,9 +311,9 @@ void textFilter::frameLength()
 			}
 		}
 
-		cout << "可变帧校验区帧长: " << endl
-			<< "帧长低字节: " << " 0x:" << lowS
-			<< "  帧长高字节: " << " 0x:" << highS
+		cout << "(原始值)可变帧校验区帧长: " << endl
+			<< left << setw(15) << "帧长低字节: " << setw(3) << " 0x:" << lowS << endl
+			<< left << setw(15) << "帧长高字节: " << setw(3) << " 0x:" << highS
 			<< endl << endl;
 
 		stringstream hexSS;
@@ -329,8 +328,8 @@ void textFilter::frameLength()
 			<< sunLength << "个"
 			<< "  0x:" << temp
 			<< endl
-			<< "帧长低字节: " << " 0x:" << lowS1
-			<< "  帧长高字节: " << " 0x:" << highS1
+			<< left << setw(15) << "帧长低字节: " << setw(3) << " 0x:" << lowS1 << endl
+			<< left << setw(15) << "帧长高字节: " << setw(3) << " 0x:" << highS1
 			<< endl;
 
 		if (lowS1 == lowS && highS1 == highS && sunLength == index - 6) //index减去无需校验的字节数
@@ -343,6 +342,103 @@ void textFilter::frameLength()
 		}
 	}
 }
+
+void textFilter::analysisText()
+{
+	// 拆分并解析链路用户数据
+
+	cout << "==========analysisText==========" << endl;
+
+	// 链路用户数据中不同的数据单元（ASDU数据单元标识、应用服务单元公共地址、数据区）
+	// multimap<string, string> m_txtM_SS_userdata;	// 文字对应键，2进制数据对应值
+
+	string datatemp;
+
+	for (auto it = m_txtM_SS.begin(); it != m_txtM_SS.end(); it++)
+	{
+		if (it->first == "链路用户数据")
+		{
+			datatemp = it->second;
+		}
+	}
+
+	m_txtM_SS_userdata.insert(make_pair("应用服务数据单元", datatemp.substr(0, 6)));
+	m_txtM_SS_userdata.insert(make_pair("应用服务单元公共地址", datatemp.substr(6, 6)));
+	m_txtM_SS_userdata.insert(make_pair("数据区", datatemp.substr(12, datatemp.length() - 12)));
+
+	// 测试输出
+	// for (auto it = m_txtM_SS_userdata.begin(); it != m_txtM_SS_userdata.end(); it++)
+	// {
+	// 	cout << it->first << " " << it->second<<endl;
+	// }
+	// cout << endl;
+
+
+	//1.ASDU数据单元标识解析
+	int i = 0;
+	cout << "应用服务数据单元" << endl;
+	for (auto it = m_txtM_SS_userdata.begin(); it != m_txtM_SS_userdata.end(); it++)
+	{
+		if (it->first == "应用服务数据单元")
+		{
+			for (int j = 0; j < it->second.length() - 1; j += 2)
+			{
+				string nametemp = nameSpeed1[i];
+				cout << left << setw(15) << nametemp << setw(3) << " 0x:" << it->second.substr(j, 2) << endl;
+				i++;
+			}
+		}
+	}
+	cout << "--------------------------------" << endl;
+
+	//2.应用服务单元公共地址解析
+	i = 0;
+	cout << "应用服务单元公共地址" << endl;
+	for (auto it = m_txtM_SS_userdata.begin(); it != m_txtM_SS_userdata.end(); it++)
+	{
+		if (it->first == "应用服务单元公共地址")
+		{
+			for (int j = 0; j < it->second.length() - 1; j += 2)
+			{
+				string nametemp = nameSpeed2[i];
+				cout << left << setw(15) << nametemp << setw(3) << " 0x:" << it->second.substr(j, 2) << endl;
+				i++;
+			}
+		}
+	}
+	cout << "--------------------------------" << endl;
+
+	//3.数据区解析
+	//中文字符需要先转为2
+
+	string userData;
+	cout << "数据区" << endl;
+	for (auto it = m_txtM_SS_userdata.begin(); it != m_txtM_SS_userdata.end(); it++)
+	{
+		if (it->first == "数据区")
+		{
+			if (it->second.length() % 2 == 0)
+			{
+				cout << "数据正常，字符为偶数" << endl;
+				cout << "数据解析结果：" << endl;
+
+				//该段只适用于英文字符
+				/*for (int j = 0; j < it->second.length() - 1; j += 2)
+				{
+					userData += static_cast<char>(stoi(it->second.substr(j, 2), nullptr, 16));
+				}
+				cout << userData << endl;*/
+
+				//
+			}
+			else
+			{
+				cout << "数据异常，字符为奇数" << endl;
+			}
+		}
+	}
+}
+
 
 
 textFilter::~textFilter()

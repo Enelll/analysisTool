@@ -10,5 +10,6 @@ int main()
 	tf.extractText();
 	tf.checkoutData();
 	tf.frameLength();
+	tf.analysisText();
 	cout << endl;
 }
