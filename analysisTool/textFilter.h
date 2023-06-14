@@ -42,6 +42,12 @@ public:
 
 	string Hex2Bin( string s); //将控制域16进制转换2进制并保存为string
 
+	string Hex2Bin_8bits(string s); //将控制域2进制转换16进制并保存为string(8位，用于UTF-8<=>unicode)
+
+	int Bin2Unicode(string s);//UTF-8的2进制去除控制位（中文字符需要去除，ascii中包含的字节转10进制），转为10进制unicode码点
+
+	string encodeUTF8(int codepoint);//10进制unicode码点编码成UTF-8输出字符
+
 	string Bin2Hex( string s); //将控制域2进制转换16进制并保存为string
 
 	string AddBinary(string a, string b);//2进制相加
@@ -85,3 +91,4 @@ public:
 
 	int numBits = 16;// 2进制数据位数
 };
+

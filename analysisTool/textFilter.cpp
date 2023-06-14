@@ -131,13 +131,67 @@ void textFilter::extractText()
 
 string textFilter::Hex2Bin(string s)
 {
-	int num = stoi(s, nullptr, 16);
+	int num = stoi(s, nullptr, 16); //将string中的16进制数转为10进制数
 	bitset<32> binary(num); // 创建一个 32 位的二进制表示，将整数值 num 转换为二进制字符串
 
 	// 将二进制表示转换为字符串，并截取需要的位数
 	string b = binary.to_string().substr(32 - numBits); //截取最后8为，需要多少位修改numBits为多少
 
 	return b;
+}
+
+string textFilter::Hex2Bin_8bits(string s)
+{
+	int num = stoi(s, nullptr, 16);
+	bitset<32> binary(num); // 创建一个 32 位的二进制表示，将整数值 num 转换为二进制字符串
+
+	// 将二进制表示转换为字符串，并截取需要的位数
+	string b = binary.to_string().substr(32 - 8); //截取最后8为，需要多少位修改numBits为多少
+
+	return b;
+}
+
+
+inline int textFilter::Bin2Unicode(string s)
+{
+	if (s.length()==8)
+	{
+		int uninum = std::stoi(s, nullptr, 2);
+		return uninum;
+	}else if (s.length() == 24)
+	{
+		
+	}
+}
+
+inline string textFilter::encodeUTF8(int codepoint)
+{
+	std::string encoded_string;
+
+	if (codepoint <= 0x7F)
+	{
+		encoded_string += static_cast<char>(codepoint);
+	}
+	else if (codepoint <= 0x7FF)
+	{
+		encoded_string += static_cast<char>(0xC0 | (codepoint >> 6));
+		encoded_string += static_cast<char>(0x80 | (codepoint & 0x3F));
+	}
+	else if (codepoint <= 0xFFFF)
+	{
+		encoded_string += static_cast<char>(0xE0 | (codepoint >> 12));
+		encoded_string += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
+		encoded_string += static_cast<char>(0x80 | (codepoint & 0x3F));
+	}
+	else if (codepoint <= 0x10FFFF)
+	{
+		encoded_string += static_cast<char>(0xF0 | (codepoint >> 18));
+		encoded_string += static_cast<char>(0x80 | ((codepoint >> 12) & 0x3F));
+		encoded_string += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
+		encoded_string += static_cast<char>(0x80 | (codepoint & 0x3F));
+	}
+
+	return encoded_string;
 }
 
 string textFilter::Bin2Hex(string s)
@@ -157,14 +211,15 @@ string textFilter::Bin2Hex(string s)
 
 		unsigned long hexValue = bits.to_ulong();
 
-		char hexChar = (hexValue < 10) ? ('0' + hexValue) : ('A' + hexValue - 10);
 		// 转换为十六进制字符
+		char hexChar = (hexValue < 10) ? ('0' + hexValue) : ('A' + hexValue - 10);
 
 		hex.push_back(hexChar);
 	}
 
 	return hex;
 }
+
 
 string textFilter::AddBinary(string a, string b)
 {
@@ -429,7 +484,41 @@ void textFilter::analysisText()
 				}
 				cout << userData << endl;*/
 
-				//
+				//报文16进制数(UTF-8)转2进制，判断是控制位，继续进行截取操作
+				string encodetemp = it->second;
+
+				for (int i = 0; i < encodetemp.length() - 1; )
+				{
+					cout << "0x: " << encodetemp.substr(i, 2) << endl;
+
+					//逐个截取数据区的16进制数，并转为8位2进制数
+					string temp = Hex2Bin_8bits(encodetemp.substr(i, 2));
+					cout << "UTF-8 8位2进制： " << temp << endl;
+
+					//识别控制位，并移除8位2进制中的控制位，转为10进制数即为unicode10进制码点
+					int unitemp = 0;
+					string sum;
+					if (temp[0] = '0')
+					{
+						//对应ascii，一字节（一个16进制数
+						unitemp= Bin2Unicode(temp);
+						i + 2;
+					}
+					else if ((temp[0] = '1') && (temp[1] = '1') && (temp[2] = '1') && (temp[3] = '0'))
+					{
+						temp= encodetemp.substr(i, 6);
+						i + 6;
+					}
+					else
+					{
+						
+					}
+					cout << "unicode 10进制码点： " << unitemp << endl;
+
+					//将unicode10进制码点转为UTF-8字符并输出
+					string u8temp = encodeUTF8(unitemp);
+					cout << "UTF-8 字符数据： " << u8temp << endl;
+				}
 			}
 			else
 			{
@@ -438,7 +527,6 @@ void textFilter::analysisText()
 		}
 	}
 }
-
 
 
 textFilter::~textFilter()
